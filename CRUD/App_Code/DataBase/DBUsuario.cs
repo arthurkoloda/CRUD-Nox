@@ -8,17 +8,30 @@ using System.Linq;
 public abstract class DBUsuario
 {
     private static List<Usuario> usuarios;
-    protected List<Usuario> DBListar(string grupo, string busca)
+    protected void DBAtualizar(Usuario usuario)
     {
-        if(usuarios == null)
+        if(usuario == null)
         {
-            usuarios = new List<Usuario>();
+            throw new Exception("A lista de usuários não foi encontrada, verifique!");
         }
+        else
+        {
+            usuarios.Remove(usuarios.Find(u => u.Codigo == usuario.Codigo));
 
-        return usuarios.Where(u => (u.Cpf.Contains(busca) ||
-                                   u.Nome.Contains(busca)) && (u.Grupo.Equals(grupo) || grupo == "")).ToList();
+            usuarios.Add(usuario);
+        }
     }
-
+    protected void DBExcluir(Usuario usuario)
+    {
+        if(usuario == null)
+        {
+            throw new Exception("A lista de usuários não foi encontrada, verifique!");
+        }
+        else
+        {
+            usuarios.Remove(usuarios.Find(u => u.Codigo == usuario.Codigo));
+        }
+    }
     protected void DBInserir(Usuario usuario)
     {
         if(usuarios == null)
@@ -37,30 +50,31 @@ public abstract class DBUsuario
 
         usuarios.Add(usuario);
     }
-
-    protected void DBAtualizar(Usuario usuario)
+    protected List<Usuario> DBListar(string grupo, string busca)
     {
-        if(usuario == null)
+        if(usuarios == null)
         {
-            throw new Exception("A lista de usuários não foi encontrada, verifique!");
+            usuarios = new List<Usuario>();
         }
-        else
-        {
-            usuarios.Remove(usuarios.Find(u => u.Codigo == usuario.Codigo));
 
-            usuarios.Add(usuario);
-        }
+        return usuarios.Where(u => (u.Cpf.Contains(busca) ||
+                                   u.Nome.Contains(busca)) && (u.Grupo.Equals(grupo) || grupo == "Todos")).ToList();
     }
-
-    protected void DBExcluir(Usuario usuario)
+    protected void DBSelecionar(Usuario usuario)
     {
-        if(usuario == null)
+        if (usuario == null)
         {
             throw new Exception("A lista de usuários não foi encontrada, verifique!");
         }
         else
         {
-            usuarios.Remove(usuarios.Find(u => u.Codigo == usuario.Codigo));
+            Usuario usu = usuarios.Find(u => u.Codigo == usuario.Codigo);
+
+            usuario.Nome = usu.Nome;
+            usuario.DataContratacao = usu.DataContratacao;
+            usuario.DataNascimento = usu.DataNascimento;
+            usuario.Cpf = usu.Cpf;
+            usuario.Grupo = usu.Grupo;
         }
     }
 }
